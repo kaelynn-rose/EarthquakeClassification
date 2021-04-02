@@ -86,5 +86,11 @@ The plot below shows the model MSE loss history over 15 epochs:
 
 ![plot](./figures/model_loss.png) 
 
+These loss values indicate that the model reaches its peak performance around epoch #4, so 15 epochs was not necessary and just resulted in overfitting of the training set. To improve model speed for a real-world monitoring application, this model would only need 4 epochs to reach good performance. 
+
+# Conclusions
+
+For this study on seismic signal classification and earthquake magnitude prediction, I created a dataset of >630,000 seismic waveform and spectrogram images. The images were used to train a classification CNN to distinguish seismic signals between earthquakes and background seismic noise, and a regression model to predict earthquake magnitude. The best classification CNN had good performance with an overall recall value of 0.9921. The regression model also had good performance, with the best model having an MSE of 0.1344. These models could likely be improved further with more training images and model tuning, and would benefit from being set up to run with cloud computing for faster training speed. These or similar models may have applications to be employed in a near-real-time earthquake monitoring system, to potentially improve earthquake detection speed and accuracy.
+
 
 
