@@ -4,6 +4,20 @@
 
 The goal of this study is to train a convolutional neural network using over 600,000 seismic signal images, to classify signals into 'earthquake' and 'noise' categories. This study has potential applications for faster earthquake detection, as this CNN could be used to classify signals in near-real time. 
 
+#### CRISP-DM Process
+
+Business understanding – A company or institution that performs earthquake monitoring could use these models and analysis for implementing deep learning into their monitoring algorithms, which have traditionally been based off of signal amplitude short-term-average/long-term-average (STA/LTA) calculations to flag earthquakes. These models could result in faster or more accurate detection of earthquakes.
+
+Data understanding – This dataset consists of over 1.2 million seismic signals from the STanford EArthquake Dataset (STEAD). This is a labeled dataset that has applications for testing many other types of machine learning on seismic signals.
+
+Data preparation – The seismic data was used to create >600,000 seismic data images, which were used to train the models.
+
+Modeling – Two models were used: a classification model to distinguish earthquakes from seismic noise, and a regression model to predict earthquake magnitude based on the images.
+
+Evaluation – The models were evaluated using accuracy/precision/recall for the classification model, and mean-squared-error (MSE) loss for the regression model. The best models for each case had good performance on the training and test datsets.
+
+Deployment – These models could be deployed in a near-real-time earthquake monitoring environment to supplement existing algorithms and to help flag and analyze earthquakes as they occur.
+
 ## Data
 
 For this study, I used the STanford EArthquake Dataset (STEAD) (available at https://github.com/smousavi05/STEAD), a dataset containing 1.2 million seismic signals and corresponding metadata. STEAD is a high-quality global seismic dataset for which each signal has been classified as either:
