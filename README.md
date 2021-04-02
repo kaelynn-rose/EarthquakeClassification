@@ -28,7 +28,19 @@ Each seismic sample has 3 data channels of seismic data in .h5py format along wi
 
 ### Exploratory Data Analysis
 
+The metadata csv file provided by STEAD was filtered to only include the 635,426 samples, and used for exploratory data analysis. An example of a single seismic waveform and spectrogram is shown below, along with a graph of its power spectral density (PSD) over time:
 
+![plot](./figures/wave_spec_psd.png) 
+
+Earthquakes in the dataset ranged from about 0 - 6 magnitude, 0 to 150 source depth, and 0 to 350 km from the receiving seismic station.
+
+![plot](./figures/mags_depths_dists.png) 
+
+The global distribution of earthquakes in this dataset is shown here:
+![plot](./figures/eq_map.png) 
+
+The global distribution of seismic stations which detected the earthquakes in the dataset is shown here:
+![plot](./figures/station_map.png) 
 
 ### Image Creation
 
