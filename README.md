@@ -70,12 +70,39 @@ The spectrogram images were labeled with values of 'earthquake' or 'noise'. I cr
 
 Baseline model: Earthquakes were the larger class, with 63.33% of the signals being earthquake signals, so the baseline model would be that the model would guess that all signals were earthquakes. This would give a baseline precision of 0.633, a baseline accuracy of 0.633, and a baseline recall of 1.0.
 
+The best model had the following CNN structure:
+
+```
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d_2 (Conv2D)            (None, 100, 150, 32)      832       
+_________________________________________________________________
+max_pooling2d_2 (MaxPooling2 (None, 50, 75, 32)        0         
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 50, 75, 32)        0         
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 120000)            0         
+_________________________________________________________________
+dense_3 (Dense)              (None, 16)                1920016   
+_________________________________________________________________
+dropout_2 (Dropout)          (None, 16)                0         
+_________________________________________________________________
+dense_4 (Dense)              (None, 10)                170       
+=================================================================
+Total params: 1,921,018
+Trainable params: 1,921,018
+Non-trainable params: 0
+_________________________________________________________________
+```
+
 The best model had the following metrics when predicting on the test set:
 * Accuracy: 0.9848
 * Precision: 0.9840
 * Recall: 0.9921
 
-For the use case of using this model to detect earthquakes in near-real-time, we would want to minimize false positives so that we are not classifying noise as earthquakes, so precision would be the most useful metric.
+For the use case of using this model to detect earthquakes in near-real-time, we would want to have a balance between minimizing false negatives and false positives so that we could classify earthquakes correctly but also not classify every noise signal as an earthquake. For this case, the most important metric would be accuracy since it gives us the proportion of true positives and true negatives identified by the model.
 
 Evaluating the test set produced the following confusion matrix:
 
@@ -95,6 +122,35 @@ The plot below shows the model accuracy history over 15 epochs:
 For the regression CNN, I used 200,000 spectrogram images and the target variable of earthquake magnitude. I created and tested a regression convolutional neural network model on the 200,000 image set, using the "earthquake_cnn.py" script in this repo. The script first imports the 200,000 randomly chosen images from the directory, performs a train-test split, compiles and then fits a regression cnn model using the specified target, and then evaluates and saves the model and produces evaluation figures. The model uses callbacks to save the partially-trained model at the end of each epoch.
 
 Baseline model: The baseline model is the mean of the source magnitudes in the input dataset, so a predicted magnitude of 1.5215, which would give us a baseline MSE of 0.9497.  
+
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 100, 150, 32)      832       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 50, 75, 32)        0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 48, 73, 64)        18496     
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 24, 36, 64)        0         
+_________________________________________________________________
+dropout (Dropout)            (None, 24, 36, 64)        0         
+_________________________________________________________________
+flatten (Flatten)            (None, 55296)             0         
+_________________________________________________________________
+dense (Dense)                (None, 16)                884752    
+_________________________________________________________________
+dense_1 (Dense)              (None, 32)                544       
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 33        
+=================================================================
+Total params: 904,657
+Trainable params: 904,657
+Non-trainable params: 0
+_________________________________________________________________
+```
 
 The best model had an MSE of 0.1344 when predicting on the test set. 
 
