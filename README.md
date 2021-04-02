@@ -67,5 +67,24 @@ The model predictions were then evaluated, and the best and worse performing ima
 
 ![plot](./figures/earthquakes_vs_noise.png) 
 
+The plot below shows the model accuracy history over 15 epochs:
+
+![plot](./figures/accuracy_history.png) 
+
+
+## Regression CNN
+
+For the regression CNN, I used 200,000 spectrogram images and the target variable of earthquake magnitude. I created and tested a regression convolutional neural network model on the 200,000 image set, using the "earthquake_cnn.py" script in this repo. The script first imports the 200,000 randomly chosen images from the directory, performs a train-test split, compiles and then fits a regression cnn model using the specified target, and then evaluates and saves the model and produces evaluation figures. The model uses callbacks to save the partially-trained model at the end of each epoch.
+
+The best model had an MSE loss of 0.1344 when predicting on the test set. 
+
+A plot comparing observed/actual earthquake magnitude values vs. the magnitude values predicted by the regression CNN model is shown here:
+
+![plot](./figures/regression_vals4.png) 
+
+The plot below shows the model MSE loss history over 15 epochs:
+
+![plot](./figures/model_loss.png) 
+
 
 
