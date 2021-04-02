@@ -4,6 +4,20 @@
 
 The goal of this study is to train a convolutional neural network using over 600,000 seismic signal images, to classify signals into 'earthquake' and 'noise' categories. This study has potential applications for faster earthquake detection, as this CNN could be used to classify signals in near-real time. 
 
+#### CRISP-DM Process
+
+Business understanding – A company or institution that performs earthquake monitoring could use these models and analysis for implementing deep learning into their monitoring algorithms, which have traditionally been based off of signal amplitude short-term-average/long-term-average (STA/LTA) calculations to flag earthquakes. These models could result in faster or more accurate detection of earthquakes.
+
+Data understanding – This dataset consists of over 1.2 million seismic signals from the STanford EArthquake Dataset (STEAD). This is a labeled dataset that has applications for testing many other types of machine learning on seismic signals.
+
+Data preparation – The seismic data was used to create >600,000 seismic data images, which were used to train the models.
+
+Modeling – Two models were used: a classification model to distinguish earthquakes from seismic noise, and a regression model to predict earthquake magnitude based on the images.
+
+Evaluation – The models were evaluated using accuracy/precision/recall for the classification model, and mean-squared-error (MSE) loss for the regression model. The best models for each case had good performance on the training and test datsets.
+
+Deployment – These models could be deployed in a near-real-time earthquake monitoring environment to supplement existing algorithms and to help flag and analyze earthquakes as they occur.
+
 ## Data
 
 For this study, I used the STanford EArthquake Dataset (STEAD) (available at https://github.com/smousavi05/STEAD), a dataset containing 1.2 million seismic signals and corresponding metadata. STEAD is a high-quality global seismic dataset for which each signal has been classified as either:
@@ -28,8 +42,75 @@ Each seismic sample has 3 data channels of seismic data in .h5py format along wi
 
 ### Exploratory Data Analysis
 
+The metadata csv file provided by STEAD was filtered to only include the 635,426 samples, and used for exploratory data analysis. An example of a single seismic waveform and spectrogram is shown below, along with a graph of its power spectral density (PSD):
 
+![plot](./figures/wave_spec_psd.png) 
+
+Earthquakes in the dataset ranged from -0.36 to 7.9 magnitude with an average magnitude of 1.52, ranged from -3.46 km to 341.74 km source depth with an average of 15.42 km depth, and 0 km to 336.38 km from the receiving seismic station, with an average distance of 50.58 km.
+
+![plot](./figures/mags_depths_dists.png) 
+
+The global distribution of earthquakes in this dataset is shown here:
+![plot](./figures/eq_map.png) 
+
+The global distribution of seismic stations which detected the earthquakes in the dataset is shown here:
+![plot](./figures/station_map.png) 
 
 ### Image Creation
 
 To create images for training my convolutional neural network, I plotted both the waveform and spectrogram for the vertical component of each seismogram and saved these as separate images, with the waveform images being 110x160 pixels and the spectrograms being 100x150 pixel images. I normalized the color axis of the spectrograms to the range of -10 to 25 decibels per Hz for consistency across all signals. The spectrograms were created using an NFFT of 256. These signals were plotted using the _plot_images.py_ file contained in this repo.
+
+Here are examples of earthquake and noise spectrograms that were used to train the CNN models:
+![plot](./figures/earthquakes_vs_noise_cnn_images.png) 
+
+
+## Classification CNN
+
+The spectrogram images were labeled with values of 'earthquake' or 'noise'. I created and tested a classifying convolutional neural network model on a subset of 200,000 randomly chosen images from the set, using the "earthquake_cnn.py" script in this repo. The script first imports the 200,000 randomly chosen images from the directory, performs a train-test split, compiles and then fits a classification cnn model, and then evaluates and saves the model and produces evaluation figures so model performance can be inspected visually. The model uses callbacks to save the partially-trained model at the end of each epoch.
+
+Baseline model: Earthquakes were the larger class, with 63.33% of the signals being earthquake signals, so the baseline model would be that the model would guess that all signals were earthquakes. This would give a baseline precision of 0.633, a baseline accuracy of 0.633, and a baseline recall of 1.0.
+
+The best model had the following metrics when predicting on the test set:
+* Accuracy: 0.9848
+* Precision: 0.9840
+* Recall: 0.9921
+
+For the use case of using this model to detect earthquakes in near-real-time, we would want to minimize false positives so that we are not classifying noise as earthquakes, so precision would be the most useful metric.
+
+Evaluating the test set produced the following confusion matrix:
+
+![plot](./figures/confusion_matrix.png) 
+
+The model predictions were then evaluated, and the best and worse performing images are shown here:
+
+![plot](./figures/earthquakes_vs_noise.png) 
+
+The plot below shows the model accuracy history over 15 epochs:
+
+![plot](./figures/accuracy_history.png) 
+
+
+## Regression CNN
+
+For the regression CNN, I used 200,000 spectrogram images and the target variable of earthquake magnitude. I created and tested a regression convolutional neural network model on the 200,000 image set, using the "earthquake_cnn.py" script in this repo. The script first imports the 200,000 randomly chosen images from the directory, performs a train-test split, compiles and then fits a regression cnn model using the specified target, and then evaluates and saves the model and produces evaluation figures. The model uses callbacks to save the partially-trained model at the end of each epoch.
+
+Baseline model: The baseline model is the mean of the source magnitudes in the input dataset, so a predicted magnitude of 1.5215, which would give us a baseline MSE of 0.9497.  
+
+The best model had an MSE of 0.1344 when predicting on the test set. 
+
+A plot comparing observed/actual earthquake magnitude values vs. the magnitude values predicted by the regression CNN model is shown here:
+
+![plot](./figures/regression_vals4.png) 
+
+The plot below shows the model MSE loss history over 15 epochs:
+
+![plot](./figures/model_loss.png) 
+
+These loss values indicate that the model reaches its peak performance around epoch #4, so 15 epochs was not necessary and just resulted in overfitting of the training set. To improve model speed for a real-world monitoring application, this model would only need 4 epochs to reach good performance. 
+
+# Conclusions
+
+For this study on seismic signal classification and earthquake magnitude prediction, I created a dataset of >630,000 seismic waveform and spectrogram images. The images were used to train a classification CNN to distinguish seismic signals between earthquakes and background seismic noise, and a regression model to predict earthquake magnitude. The best classification CNN had good performance with an overall recall value of 0.9921. The regression model also had good performance, with the best model having an MSE of 0.1344. These models could likely be improved further with more training images and model tuning, and would benefit from being set up to run with cloud computing for faster training speed. These or similar models may have applications to be employed in a near-real-time earthquake monitoring system, to potentially improve earthquake detection speed and accuracy.
+
+
+
