@@ -14,7 +14,6 @@ on 3/31/2021
 
 '''
 
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -140,10 +139,11 @@ waveform_spectrogram_plot(eq1_sig_path,8020,eq1_list)
 ### Figure 2: PLot of Earthquake magnitude, depth and distance
 
 def plot_mags_depths_distance():
-    depths = img_dataset['source_depth_km'].dropna()
+    depths = img_dataset['source_depth_km'].dropna() # clean depth data
     depths = np.array(depths)
     depths = [float(x) for x in depths if x != 'None'] # get the earthquake source depths
 
+    # plot
     plt.style.use('seaborn-pastel')
     fig, (ax1,ax2,ax3) = plt.subplots(1,3,figsize=(16,5))
     ax1.hist(img_dataset['source_magnitude'],bins=100) # plot earthquake source magnitude
@@ -200,6 +200,7 @@ def plot_stations(dotcolor,dotsize,dotshape):
     lats = img_dataset['receiver_latitude'] # get seismic station latitudes
     lons = img_dataset['receiver_longitude'] # get seismic station longitudes
 
+    # plot
     fig, ax = plt.subplots(figsize=(18,13))
     ax = plt.axes(projection=ccrs.PlateCarree())
     ax.coastlines()
@@ -215,3 +216,55 @@ def plot_stations(dotcolor,dotsize,dotshape):
 
 # test the plotting function
 plot_stations('blue',20,'v') # plot marker color, size, shape
+
+
+### Figure 5: example plot of earthquake signals vs. noise signals being used to train the CNN
+
+def eq_vs_noise_plot():
+    dtfl = h5py.File(eq1_sig_path, 'r')
+    dataset1 = dtfl.get('data/'+str(eq1_list[8021])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data1 = np.array(dataset1)
+
+    dtf2 = h5py.File(eq2_sig_path, 'r')
+    dataset2 = dtf2.get('data/'+str(eq2_list[8020])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data2 = np.array(dataset2)
+
+    dtf3 = h5py.File(eq3_sig_path, 'r')
+    dataset3 = dtf3.get('data/'+str(eq3_list[155555])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data3 = np.array(dataset3)
+
+    dtf4 = h5py.File(noise_sig_path, 'r')
+    dataset4 = dtf4.get('data/'+str(noise_list[6524])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data4 = np.array(dataset4)
+
+    dtf5 = h5py.File(noise_sig_path, 'r')
+    dataset5 = dtf5.get('data/'+str(noise_list[8111])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data5 = np.array(dataset5)
+
+    dtf6 = h5py.File(noise_sig_path, 'r')
+    dataset6 = dtf6.get('data/'+str(noise_list[9333])) # select a random trace name from the list
+    # waveforms, 3 channels: first row: E channel, second row: N channel, third row: Z channel
+    data6 = np.array(dataset6)
+
+    fig, axs = plt.subplots(2,3,figsize=(12,8))
+    datasets = [dataset1,dataset2,dataset3,dataset4,dataset5,dataset6]
+    datas = [data1,data2,data3,data4,data5,data6]
+    titles = ['earthquake','earthquake','earthquake','noise','noise','noise']
+    for i, ax in enumerate(axs.flatten()):
+        im = ax.specgram(datas[i][:,2],Fs=100,NFFT=256,cmap='gray',vmin=-10,vmax=25)
+        ax.set_ylabel('Frequency (Hz)',fontsize=12)
+        ax.set_xlabel('Time (s)',fontsize=12)
+        ax.set_title(titles[i],fontsize=14)
+
+    plt.tight_layout()
+    plt.savefig('earthquakes_vs_noise_cnn_images.png')
+    plt.show()
+
+# use this plotting function
+eq_vs_noise_plot()
+
