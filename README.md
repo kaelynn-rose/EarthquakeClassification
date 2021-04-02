@@ -33,3 +33,6 @@ Each seismic sample has 3 data channels of seismic data in .h5py format along wi
 ### Image Creation
 
 To create images for training my convolutional neural network, I plotted both the waveform and spectrogram for the vertical component of each seismogram and saved these as separate images, with the waveform images being 110x160 pixels and the spectrograms being 100x150 pixel images. I normalized the color axis of the spectrograms to the range of -10 to 25 decibels per Hz for consistency across all signals. The spectrograms were created using an NFFT of 256. These signals were plotted using the _plot_images.py_ file contained in this repo.
+
+Here are examples of earthquake and noise images that were used to train the CNN:
+![plot](./figures/earthquakes_vs_noise_cnn_images.png) 
